@@ -9,51 +9,50 @@ import SwiftUI
 
 struct ContentView: View {
     
-    var convertFromUnit = ["kg", "lb", "g", "t", "st"]
-    var convertToUnit = ["kg", "lb", "g", "t", "st"]
-    
     @State private var unitFrom = "kg"
     @State private var unitTo = "lb"
     @State private var inputWeight = 0.0
+    
+    var convertFromUnit = ["kg", "lb", "g", "t", "st"]
+    var convertToUnit = ["kg", "lb", "g", "t", "st"]
     
     @FocusState private var amountIsFocused: Bool
     
     var conversionResult : Double {
         
-        var base = inputWeight
-        var result = 0.0
+        var inputToKGMultiplier: Double
+        var kgToOutputMultiplier: Double
         
         switch unitFrom {
-            case "kg":
-                base = inputWeight
             case "lb":
-                base = inputWeight / 2.20462
+                inputToKGMultiplier = 0.45359237
             case "g":
-                base = inputWeight / 1000.0
+                inputToKGMultiplier = 0.001
             case "t":
-                base = inputWeight * 907.185
+                inputToKGMultiplier = 907.185
             case "st":
-                base = inputWeight * 142.9
+                inputToKGMultiplier = 6.35029
             default:
-                base = inputWeight
+                inputToKGMultiplier = 1
         }
         
         switch unitTo {
-            case "kg":
-                result = base
             case "lb":
-                result = base * 2.20462
+                kgToOutputMultiplier = 2.20462
             case "g":
-                result = base * 1000.0
+                kgToOutputMultiplier  = 1000.0
             case "t":
-                result = inputWeight / 907.185
+                kgToOutputMultiplier = 0.001102
             case "st":
-                result = inputWeight / 142.9
+                kgToOutputMultiplier = 0.157473
             default:
-                result = inputWeight
+                kgToOutputMultiplier = 1
         }
         
-        return result
+        var inputToKG = inputWeight * inputToKGMultiplier
+        var outputWeight = inputToKG * kgToOutputMultiplier
+        
+        return outputWeight.rounded()
         
     }
     
@@ -65,6 +64,7 @@ struct ContentView: View {
                 Section ("Convert") {
                     TextField("Amount", value: $inputWeight, format: .number)
                     .focused($amountIsFocused)
+                    .keyboardType(.decimalPad)
                     
                     Picker("Selected Unit", selection: $unitFrom) {
                         ForEach(convertFromUnit, id: \.self) {
@@ -73,7 +73,6 @@ struct ContentView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                .keyboardType(.decimalPad)
                 
                 
                 // Segmented control for - kilograms, pounds, grams, tonnes, stones
