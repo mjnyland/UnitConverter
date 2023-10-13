@@ -51,8 +51,13 @@ struct ContentView: View {
         
         var inputToKG = inputWeight * inputToKGMultiplier
         var outputWeight = inputToKG * kgToOutputMultiplier
+        var roundedOutput = round(outputWeight)
         
-        return outputWeight.rounded()
+        if (unitFrom == unitTo) {
+            return roundedOutput
+        } else {
+            return outputWeight
+        }
         
     }
     
